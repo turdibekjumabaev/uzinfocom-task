@@ -25,17 +25,10 @@ class OTP(db.Model):
         self.expires_at = datetime.now() + timedelta(seconds=expires_in)
 
     def check_otp(self, otp_code):
-        if datetime.now() > self.expires_at:
-            return False
-
-        is_vaild = check_password_hash(self.otp_hash, otp_code)
-        if is_vaild:
-            self.mark_as_used()
-
-        return is_vaild
+        return check_password_hash(self.otp_hash, otp_code)
 
     def is_expired(self):
-        return datetime.now() > self.expires_at
+        return datetime.now() > self.expires_at or self.used
 
     def mark_as_used(self):
         self.used = True
