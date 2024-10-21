@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger
 
 from src.loader import init_app
 from src.services.worker import process_sms
@@ -8,6 +9,7 @@ import threading
 
 app = Flask(__name__)
 jwt = JWTManager(app)
+swagger = Swagger(app)
 init_app(app)
 
 
