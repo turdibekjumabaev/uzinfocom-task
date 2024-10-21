@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from src.models import User, OTP, Role
 from src.dp import db
 import logging
@@ -201,6 +201,57 @@ def log_in():
 
     otp.mark_as_used()
     db.session.commit()
+
+    return jsonify({
+        'access_token': access_token,
+        'user_id': user.user_id,
+        'first_name': user.first_name,
+        'last_name': user.last_name
+    }), 200
+
+
+@auth_bp.route('/register-admin', methods=['POST'])
+@jwt_required()
+def register_admin():
+    current_user_phone_number = get_jwt_identity()
+    current_user = User.query.filter_by(mobile_phone=current_user_phone_number).first()
+    admin_role = Role.query.filter_by(role_name='ADMIN').first()
+
+    if current_user.role_id != admin_role.role_id:
+        return jsonify({'message': 'You are not an admin'}), 403
+
+    data = request.get_json()
+    first_name = data.get('first_name', None)
+    last_name = data.get('last_name', None)
+    mobile_phone = data.get('mobile_phone', None)
+    password = data.get('password', None)
+
+    new_admin = User(first_name=first_name, last_name=last_name, mobile_phone=mobile_phone, password=password, role_id=admin_role.role_id)
+    db.session.add(new_admin)
+    db.session.commit()
+    logger.info(f'Admin registered: {current_user.first_name} {current_user.last_name}')
+
+    return jsonify({'message': 'Admin registered'}), 200
+
+
+@auth_bp.route('/admin-login', methods=['POST'])
+def admin_login():
+    data = request.get_json()
+    mobile_phone = data.get('mobile_phone', None)
+    password = data.get('password', None)
+
+    if not mobile_phone or not password:
+        return jsonify({'message': 'All arguments are required'}), 400
+
+    user = User.query.filter_by(mobile_phone=mobile_phone).first()
+    if not user:
+        return jsonify({'message': 'User does not exist'}), 400
+
+    if not user.check_password(password):
+        return jsonify({'message': 'Invalid password'}), 400
+
+    access_token = create_access_token(identity=user.mobile_phone)
+    logger.info(f'Admin logged in: {user.first_name} {user.last_name}')
 
     return jsonify({
         'access_token': access_token,
