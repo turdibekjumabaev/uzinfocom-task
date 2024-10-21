@@ -32,13 +32,13 @@ def otp():
             return jsonify({'message': 'Invalid mobile_phone format'}), 400
 
         otp_code = str(secrets.randbelow(9000) + 1000)
-        logger.info(f"Generated OTP code: {otp_code} for mobile_phone: {mobile_phone}")
+        # logger.info(f"Generated OTP code: {otp_code} for mobile_phone: {mobile_phone}")
 
         existing_otp = OTP.query.filter_by(phone=mobile_phone).first()
 
         if existing_otp:
-            if existing_otp.is_expired() or existing_otp.used:
-                logger.info(f"Updating existing OTP record for mobile_phone: {mobile_phone}")
+            if existing_otp.is_expired():
+                # logger.info(f"Updating existing OTP record for mobile_phone: {mobile_phone}")
                 existing_otp.used = False
                 existing_otp.set_otp(otp_code)
             else:
@@ -50,11 +50,11 @@ def otp():
             db.session.add(new_otp)
 
         db.session.commit()
-        logger.info(f"OTP saved to database for mobile_phone: {mobile_phone}")
+        # logger.info(f"OTP saved to database for mobile_phone: {mobile_phone}")
 
         redis.rpush('sms_queue', json.dumps({
             'mobile_phone': mobile_phone,
-            'message': f'Your one-time verification code: {otp_code}'
+            'message': f'Ketti.uz ushın tastıyqlaw kodı: {otp_code}'
         }))
         logger.info(f"OTP code pushed to Redis queue for mobile_phone: {mobile_phone}")
 

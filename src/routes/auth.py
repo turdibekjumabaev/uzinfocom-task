@@ -32,7 +32,7 @@ def register():
     if not otp.check_otp(otp_code):
         return jsonify({'message': 'Invalid OTP code'}), 400
 
-    if otp.is_expired() or otp.used:
+    if otp.is_expired():
         return jsonify({'message': 'OTP code expired'}), 400
 
     user = User.query.filter_by(mobile_phone=mobile_phone).first()
@@ -40,6 +40,7 @@ def register():
         return jsonify({'message': 'User already exists'}), 400
 
     new_user = User(first_name=first_name, last_name=last_name, mobile_phone=mobile_phone, role_id=user_role.role_id)
+    otp.mark_as_used()
     db.session.add(new_user)
     db.session.commit()
 
@@ -70,11 +71,14 @@ def log_in():
         db.session.rollback()
         return jsonify({'message': 'Invalid OTP code'}), 400
 
-    if otp.is_expired() or otp.used:
+    if otp.is_expired():
         return jsonify({'message': 'OTP code expired'}), 400
 
     access_token = create_access_token(identity=user.mobile_phone)
     logger.info(f'User logged in: {user.first_name} {user.last_name}, Phone: {user.mobile_phone}')
+
+    otp.mark_as_used()
+    db.session.commit()
 
     return jsonify({
         'access_token': access_token,
