@@ -13,6 +13,69 @@ logger = logging.getLogger(__name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    """
+        Jańa paydalanıwshılar dizimnen ótiwi ushın
+        ---
+        tags:
+            - Auth
+        parameters:
+          - name: body
+            in: body
+            required: true
+            description: JSON object
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - mobile_phone
+                - otp_code
+              properties:
+                first_name:
+                  type: string
+                  description: Paydalanıwshınıń atı
+                  example: Turdıbek
+                last_name:
+                  type: string
+                  description: Paydalanıwshınıń familiyası
+                  example: Jumabaev
+                mobile_phone:
+                  type: string
+                  description: Telefon nomer
+                  example: 998932000573
+                otp_code:
+                  type: string
+                  description: Tastıyıqlaw ushın bir mártelik kod
+                  example: 1234
+        responses:
+          201:
+            description: Jańa paydalanıwshı jaratıldı
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User created"
+                user_id:
+                  type: integer
+                  example: 1
+          400:
+            description: Jańa paydalanıwshı jaratılmaǵan jaǵday
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: ["All arguments are required", "OTP code not found for this mobile number", "User already exists"]
+          500:
+            description: Qátelik ☠️
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Please try again later"
+        """
     user_role = Role.query.filter_by(role_name='USER').first()
 
     data = request.get_json()
@@ -51,6 +114,65 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def log_in():
+    """
+        Júyege kiriw
+        ---
+        tags:
+            - Auth
+        parameters:
+          - name: body
+            in: body
+            required: true
+            description: JSON object
+            schema:
+              type: object
+              required:
+                - mobile_phone
+                - otp_code
+              properties:
+                mobile_phone:
+                  type: string
+                  description: Telefon nomer
+                  example: 998932000573
+                otp_code:
+                  type: string
+                  description: Tastıyıqlaw kodı
+                  example: 1234
+        responses:
+          200:
+            description: Tabıslı! Paydalanıwshı ushın access_token jaratıp berildi
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                user_id:
+                  type: integer
+                  example: 1
+                first_name:
+                  type: string
+                  example: John
+                last_name:
+                  type: string
+                  example: Doe
+          400:
+            description: Kirgizilgen maǵlıwmatlardaǵı qátelik yamasa jaramsız OTP
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: ["All arguments are required", "User does not exist", "Invalid OTP code"]
+          500:
+            description: Qátelik ☠️
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Please try again later"
+        """
     data = request.get_json()
     mobile_phone = data.get('mobile_phone', None)
     otp_code = data.get('otp_code', None)

@@ -21,6 +21,51 @@ def validate_phone(mobile_phone):
 
 @otp_bp.route('/send', methods=['POST'])
 def otp():
+    """
+    Telefon nomerge tastıyıqlaw ushın kod alıw
+    ---
+    tags:
+        - OTP
+    parameters:
+      - name: body
+        in: body
+        required: true
+        description: JSON object
+        schema:
+          type: object
+          required:
+            - mobile_phone
+          properties:
+            mobile_phone:
+              type: string
+              description: Mobile phone number
+              example: 998932000573
+    responses:
+      201:
+        description: Hámme nárse tayar hám OTP jiberiw ushın gezekke qosıldı.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "The OTP code has been added to the queue"
+      400:
+        description: OTP kod jiber waqıtında mashqala. Bul jaǵdayda OTP jiberilmeydi. example listinde kórsetilgen xabarlardıń biri qaytıwı múmkin
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: ["mobile_phone is required", "Invalid mobile_phone format", "The OTP given to you is still usable"]
+      500:
+        description: Qátelik ☠️
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Please try again later"
+    """
     try:
         data = request.json
         mobile_phone = data.get("mobile_phone", None)
