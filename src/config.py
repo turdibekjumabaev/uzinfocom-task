@@ -11,6 +11,3 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')
-
-    ESKIZ_EMAIL = os.getenv('ESKIZ_EMAIL', None)
-    ESKIZ_PASSWORD = os.getenv('ESKIZ_PASSWORD', None)
