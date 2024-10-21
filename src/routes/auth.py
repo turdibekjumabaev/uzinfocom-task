@@ -213,6 +213,59 @@ def log_in():
 @auth_bp.route('/register-admin', methods=['POST'])
 @jwt_required()
 def register_admin():
+    """
+    Jańa admindi dizimnen ótkeriw
+    ---
+    tags:
+        - Admin Auth
+    parameters:
+      - name: body
+        in: body
+        required: true
+        description: JSON object
+        schema:
+          type: object
+          required:
+            - first_name
+            - last_name
+            - mobile_phone
+            - password
+          properties:
+            first_name:
+              type: string
+              description: Atı
+              example: Turdıbek
+            last_name:
+              type: string
+              description: Familiyası
+              example: Jumabaev
+            mobile_phone:
+              type: string
+              description: Telefon nomer
+              example: 998932000573
+            password:
+              type: string
+              description: Parol
+              example: <PASSWORD>
+    responses:
+      200:
+        description: Tabıslı! Admin ushın access_token jaratıp berildi
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Admin registered"
+      403:
+        description: Admin roline iye bolmaǵan paydalanıwshı admin akkount jaratıwǵa háreket etkende
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "You are not an admin"
+
+    """
     current_user_phone_number = get_jwt_identity()
     current_user = User.query.filter_by(mobile_phone=current_user_phone_number).first()
     admin_role = Role.query.filter_by(role_name='ADMIN').first()
@@ -236,6 +289,57 @@ def register_admin():
 
 @auth_bp.route('/admin-login', methods=['POST'])
 def admin_login():
+    """
+    Adminler ushın júyege kiriw
+    ---
+    tags:
+        - Admin Auth
+    parameters:
+      - name: body
+        in: body
+        required: true
+        description: JSON object
+        schema:
+          type: object
+          required:
+            - mobile_phone
+            - password
+          properties:
+            mobile_phone:
+              type: string
+              description: Telefon nomer
+              example: 998932000573
+            otp_code:
+              type: string
+              description: Tastıyıqlaw ushın kod
+              example: 1234
+    responses:
+      200:
+        description: Tabıslı! Amdin ushın access_token jaratıp berildi
+        schema:
+          type: object
+          properties:
+            access_token:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            user_id:
+              type: integer
+              example: 1
+            first_name:
+              type: string
+              example: Turdıbek
+            last_name:
+              type: string
+              example: Jumabaev
+      400:
+        description: Kirgizilgen maǵlıwmatlarda qátelik
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: ["All arguments are required", "User does not exist", "Invalid password"]
+    """
     data = request.get_json()
     mobile_phone = data.get('mobile_phone', None)
     password = data.get('password', None)
