@@ -11,6 +11,7 @@ Bul proyekt Flask-ke tiykarlanǵan autentifikaciya sisteması bolıp, paydalanı
    - [Installing libraries](#sırtqı-paketlerdi-ornatıw)
    - [Installing Gunicorn](#gunicorndı-ornatıw)
    - [Running](#proyektti-júrgiziw)
+ - [**Documentation**]
 
 ## Imkaniyatlar
  - OTP tastıyıqlaw járdeminde dizimnen ótiw
@@ -31,6 +32,8 @@ Bul proyekt Flask-ke tiykarlanǵan autentifikaciya sisteması bolıp, paydalanı
  - **SQLAlchemy**: Databazanı basqarıw ushın ORM
  - **Redis**: SMS xabarlardı waqtınshalıq saqlaw ushın
  - **PostgreSQL**: Maǵlıwmatlar bazası
+
+---
 
 # Proyektti iske túsiriw
 ## Virual Ortalıq
@@ -57,3 +60,8 @@ pip install gunicorn
 ```shell
 gunicorn --bind 0.0.0.0:8080 app:app
 ```
+
+---
+
+# Documentaciya
+API haqqında dokumentaciyanı (Swagger-UI) kóriw ushın `/apidocs/` endpointına shaqırıq etiń.
