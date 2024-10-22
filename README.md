@@ -11,7 +11,7 @@ Bul proyekt Flask-ke tiykarlanǵan autentifikaciya sisteması bolıp, paydalanı
    - [Installing libraries](#sırtqı-paketlerdi-ornatıw)
    - [Installing Gunicorn](#gunicorndı-ornatıw)
    - [Running](#proyektti-júrgiziw)
- - [**Documentation**]
+ - [**Documentation**](#dokumentaciya)
 
 ## Imkaniyatlar
  - OTP tastıyıqlaw járdeminde dizimnen ótiw
@@ -63,5 +63,5 @@ gunicorn --bind 0.0.0.0:8080 app:app
 
 ---
 
-# Documentaciya
+# Dokumentaciya
 API haqqında dokumentaciyanı (Swagger-UI) kóriw ushın `/apidocs/` endpointına shaqırıq etiń.
