@@ -28,7 +28,7 @@ class OTP(db.Model):
         return check_password_hash(self.otp_hash, otp_code)
 
     def is_expired(self):
-        return datetime.now() > self.expires_at and not self.used
+        return datetime.now() > self.expires_at or self.used
 
     def mark_as_used(self):
         self.used = True
